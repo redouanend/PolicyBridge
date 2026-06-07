@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profil Expert — PolicyBridge</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+    <nav>
+        <a href="index.html" class="logo">Policy<span>Bridge</span></a>
+        <ul>
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="experts.html" class="active">Experts</a></li>
+            <li><a href="index.html#comment-ca-marche">Comment ça marche</a></li>
+            <li><a href="index.html#contact" class="btn btn-primary">Nous contacter</a></li>
+        </ul>
+    </nav>
+
+    <div id="profile-content"></div>
+
+    <footer>
+        <p>© 2025 <span>PolicyBridge</span> — Connecter l'expertise au service de l'intérêt général</p>
+    </footer>
+
+    <script src="data.js"></script>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const id = parseInt(params.get('id'));
+        const expert = experts.find(e => e.id === id);
+        const container = document.getElementById('profile-content');
+
+        if (!expert) {
+            container.innerHTML = `
+        <section style="text-align:center; padding: 5rem 6%;">
+          <h2 style="font-family:'Syne',sans-serif; color:var(--navy);">Expert introuvable</h2>
+          <p style="color:var(--gray); margin: 1rem 0 2rem;">Ce profil n'existe pas ou a été supprimé.</p>
+          <a href="experts.html" class="btn btn-primary">Retour aux experts</a>
+        </section>
+      `;
+        } else {
+            document.title = `${expert.nom} — PolicyBridge`;
+
+            container.innerHTML = `
+        <div class="page-header">
+          <a href="experts.html" style="color: var(--cyan); font-size: 0.85rem; text-decoration: none; display:inline-flex; align-items:center; gap:0.4rem; margin-bottom: 1.5rem;">
+            ← Retour aux experts
+          </a>
+          <h1>${expert.nom}</h1>
+          <p>${expert.role}</p>
+        </div>
+
+        <div class="profile-layout">
+
+          <!-- SIDEBAR -->
+          <div class="profile-sidebar">
+            <div class="profile-card">
+              <div class="profile-avatar">${expert.initiales}</div>
+              <h2>${expert.nom}</h2>
+              <div class="role">${expert.role}</div>
+
+              <div class="profile-meta">
+                <div class="meta-item">
+                  <span class="meta-icon">📍</span>
+                  <span>${expert.localisation}</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-icon">⏱️</span>
+                  <span>${expert.experience} d'expérience</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-icon">🌐</span>
+                  <span>${expert.langues.join(', ')}</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-icon">✅</span>
+                  <span style="color: var(--cyan); font-weight: 500;">${expert.disponibilite}</span>
+                </div>
+              </div>
+
+              <a href="mailto:contact@policybridge.org?subject=Demande de mise en relation — ${encodeURIComponent(expert.nom)}"
+                class="btn btn-primary" style="width: 100%; text-align: center;">
+                Contacter cet expert
+              </a>
+            </div>
+          </div>
+
+          <!-- MAIN -->
+          <div class="profile-main">
+
+            <h3>À propos</h3>
+            <p>${expert.bio}</p>
+
+            <h3>Domaines d'expertise</h3>
+            <div class="skills-list">
+              ${expert.domaines.map(d => `<span class="tag" style="font-size:0.85rem; padding: 0.4rem 0.9rem;">${d}</span>`).join('')}
+            </div>
+
+            <h3>Types de missions</h3>
+            <div class="skills-list">
+              ${expert.missions.map(m => `<span class="tag tag-cyan" style="font-size:0.85rem; padding: 0.4rem 0.9rem;">${m}</span>`).join('')}
+            </div>
+
+            <h3>Langues</h3>
+            <div class="skills-list">
+              ${expert.langues.map(l => `<span class="tag" style="font-size:0.85rem; padding: 0.4rem 0.9rem;">🌐 ${l}</span>`).join('')}
+            </div>
+
+          </div>
+        </div>
+      `;
+        }
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Experts — PolicyBridge</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+    <nav>
+        <a href="index.html" class="logo">Policy<span>Bridge</span></a>
+        <ul>
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="experts.html" class="active">Experts</a></li>
+            <li><a href="index.html#comment-ca-marche">Comment ça marche</a></li>
+            <li><a href="index.html#contact" class="btn btn-primary">Nous contacter</a></li>
+        </ul>
+    </nav>
+
+    <div class="page-header">
+        <h1>Nos experts</h1>
+        <p>Trouvez le profil idéal pour votre mission parmi nos experts vérifiés.</p>
+    </div>
+
+    <section>
+        <!-- SEARCH -->
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Rechercher un expert, un domaine..." />
+        </div>
+
+        <!-- FILTERS -->
+        <div class="filters" id="filters">
+            <button class="filter-btn active" data-filter="tous">Tous</button>
+            <button class="filter-btn" data-filter="IA & Gouvernance">IA & Gouvernance</button>
+            <button class="filter-btn" data-filter="Data Science">Data Science</button>
+            <button class="filter-btn" data-filter="Régulation">Régulation</button>
+            <button class="filter-btn" data-filter="NLP">NLP</button>
+            <button class="filter-btn" data-filter="ODD">ODD</button>
+            <button class="filter-btn" data-filter="Machine Learning">Machine Learning</button>
+        </div>
+
+        <!-- RESULTS COUNT -->
+        <p style="color: var(--gray); font-size: 0.85rem; margin-bottom: 1.5rem;" id="results-count"></p>
+
+        <!-- GRID -->
+        <div class="experts-grid" id="experts-grid"></div>
+    </section>
+
+    <footer>
+        <p>© 2025 <span>PolicyBridge</span> — Connecter l'expertise au service de l'intérêt général</p>
+    </footer>
+
+    <script src="data.js"></script>
+    <script>
+        let filtreActif = 'tous';
+        let recherche = '';
+
+        function afficherExperts() {
+            const grid = document.getElementById('experts-grid');
+            const count = document.getElementById('results-count');
+
+            let resultats = experts.filter(e => {
+                const matchFiltre = filtreActif === 'tous' || e.domaines.includes(filtreActif);
+                const matchRecherche = recherche === '' ||
+                    e.nom.toLowerCase().includes(recherche) ||
+                    e.role.toLowerCase().includes(recherche) ||
+                    e.bio.toLowerCase().includes(recherche) ||
+                    e.domaines.some(d => d.toLowerCase().includes(recherche));
+                return matchFiltre && matchRecherche;
+            });
+
+            count.textContent = `${resultats.length} expert${resultats.length > 1 ? 's' : ''} trouvé${resultats.length > 1 ? 's' : ''}`;
+
+            if (resultats.length === 0) {
+                grid.innerHTML = `<p style="color: var(--gray); grid-column: 1/-1;">Aucun expert ne correspond à votre recherche.</p>`;
+                return;
+            }
+
+            grid.innerHTML = resultats.map(e => `
+        <a href="expert.html?id=${e.id}" class="expert-card">
+          <div class="expert-card-top">
+            <div class="expert-avatar">${e.initiales}</div>
+            <div>
+              <h3>${e.nom}</h3>
+              <div class="role">${e.role}</div>
+            </div>
+          </div>
+          <p class="bio">${e.bio}</p>
+          <div class="tags">
+            ${e.domaines.map(d => `<span class="tag">${d}</span>`).join('')}
+            <span class="tag tag-cyan">${e.disponibilite}</span>
+          </div>
+        </a>
+      `).join('');
+        }
+
+        // Filtres
+        document.getElementById('filters').addEventListener('click', e => {
+            if (!e.target.classList.contains('filter-btn')) return;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+            filtreActif = e.target.dataset.filter;
+            afficherExperts();
+        });
+
+        // Recherche
+        document.getElementById('search-input').addEventListener('input', e => {
+            recherche = e.target.value.toLowerCase().trim();
+            afficherExperts();
+        });
+
+        afficherExperts();
+    </script>
+
+</body>
+
+</html>

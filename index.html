@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PolicyBridge — Connecter les experts aux organisations</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+    <nav>
+        <a href="index.html" class="logo">Policy<span>Bridge</span></a>
+        <ul>
+            <li><a href="index.html" class="active">Accueil</a></li>
+            <li><a href="experts.html">Experts</a></li>
+            <li><a href="#comment-ca-marche">Comment ça marche</a></li>
+            <li><a href="#contact" class="btn btn-primary">Nous contacter</a></li>
+        </ul>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-badge">Plateforme d'expertise IA & Politiques Publiques</div>
+        <h1>Connectez votre organisation aux <em>bons experts</em></h1>
+        <p>PolicyBridge met en relation ONG, gouvernements et institutions internationales avec des experts qualifiés en
+            IA, data et politiques publiques.</p>
+        <div class="hero-actions">
+            <a href="experts.html" class="btn btn-primary">Explorer les experts</a>
+            <a href="#comment-ca-marche" class="btn btn-outline">Comment ça marche</a>
+        </div>
+    </section>
+
+    <!-- STATS -->
+    <div class="stats">
+        <div class="stat-item">
+            <span class="stat-number">120+</span>
+            <span class="stat-label">Experts qualifiés</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">40+</span>
+            <span class="stat-label">Pays représentés</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">200+</span>
+            <span class="stat-label">Missions réalisées</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">60+</span>
+            <span class="stat-label">Organisations partenaires</span>
+        </div>
+    </div>
+
+    <!-- COMMENT CA MARCHE -->
+    <section class="how-bg" id="comment-ca-marche">
+        <div class="section-label">Processus</div>
+        <h2 class="section-title" style="color: var(--white);">Simple, rapide, efficace</h2>
+        <p class="section-sub">Trouvez l'expert idéal en quelques étapes.</p>
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">01</div>
+                <h3>Décrivez votre besoin</h3>
+                <p>Type de mission, domaine d'expertise, délai, langue. On s'adapte à votre contexte.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">02</div>
+                <h3>Explorez les profils</h3>
+                <p>Filtrez par domaine, région ou disponibilité. Chaque profil est vérifié et détaillé.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">03</div>
+                <h3>Contactez l'expert</h3>
+                <p>Envoyez une demande directement. L'expert vous répond sous 48h.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">04</div>
+                <h3>Lancez la mission</h3>
+                <p>Accord cadré, mission suivie. PolicyBridge reste disponible tout au long.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- EXPERTS EN VEDETTE -->
+    <section>
+        <div class="section-label">Experts à la une</div>
+        <h2 class="section-title">Découvrez quelques profils</h2>
+        <p class="section-sub">Des experts issus de 4 continents, prêts à intervenir.</p>
+        <div class="experts-grid" id="featured-experts"></div>
+        <div style="margin-top: 2.5rem; text-align: center;">
+            <a href="experts.html" class="btn btn-primary">Voir tous les experts</a>
+        </div>
+    </section>
+
+    <!-- POUR LES ORGANISATIONS -->
+    <section>
+        <div class="section-label">Organisations</div>
+        <h2 class="section-title">Pourquoi <em>PolicyBridge</em> ?</h2>
+        <p class="section-sub">Une solution pensée pour les acteurs de l'intérêt général.</p>
+        <div class="why-grid">
+            <div class="why-card">
+                <span class="why-icon">🎯</span>
+                <h3>Expertise ciblée</h3>
+                <p>Des profils vérifiés, spécialisés dans les enjeux IA pour le secteur public et humanitaire.</p>
+            </div>
+            <div class="why-card">
+                <span class="why-icon">⚡</span>
+                <h3>Réactivité</h3>
+                <p>Trouvez un expert disponible en moins de 72h pour vos urgences et événements.</p>
+            </div>
+            <div class="why-card">
+                <span class="why-icon">🌍</span>
+                <h3>Diversité globale</h3>
+                <p>Experts du Sud et du Nord, multilingues, avec une vraie connaissance du terrain.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section" id="contact">
+        <div class="section-label">Contact</div>
+        <h2 class="section-title">Vous avez un <em>besoin</em> ?</h2>
+        <p class="section-sub">Décrivez votre mission et nous vous mettons en relation avec les experts les plus
+            adaptés.</p>
+        <a href="mailto:contact@policybridge.org" class="btn btn-primary"
+            style="font-size: 1rem; padding: 0.9rem 2.2rem;">
+            Envoyer une demande
+        </a>
+    </section>
+
+    <footer>
+        <p>© 2025 <span>PolicyBridge</span> — Connecter l'expertise au service de l'intérêt général</p>
+    </footer>
+
+    <script src="data.js"></script>
+    <script>
+        const container = document.getElementById('featured-experts');
+        const featured = experts.slice(0, 3);
+        featured.forEach(e => {
+            container.innerHTML += `
+        <a href="expert.html?id=${e.id}" class="expert-card">
+          <div class="expert-card-top">
+            <div class="expert-avatar">${e.initiales}</div>
+            <div>
+              <h3>${e.nom}</h3>
+              <div class="role">${e.role}</div>
+            </div>
+          </div>
+          <p class="bio">${e.bio}</p>
+          <div class="tags">
+            ${e.domaines.map(d => `<span class="tag">${d}</span>`).join('')}
+            <span class="tag tag-purple">${e.disponibilite}</span>
+          </div>
+        </a>
+      `;
+        });
+    </script>
+
+</body>
+
+</html>

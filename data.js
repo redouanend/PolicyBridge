@@ -1,0 +1,80 @@
+const experts = [
+    {
+        id: 1,
+        nom: "Aminata Diallo",
+        role: "Experte en IA & Politiques Publiques",
+        localisation: "Dakar, Sénégal",
+        disponibilite: "Disponible",
+        langues: ["Français", "Anglais", "Wolof"],
+        bio: "Ancienne conseillère auprès de l'Union Africaine, spécialisée dans la gouvernance algorithmique et l'éthique de l'IA dans les pays du Sud.",
+        domaines: ["IA & Gouvernance", "Éthique IA", "Politiques Publiques"],
+        missions: ["Conseil stratégique", "Conférences", "Rédaction de rapports"],
+        experience: "12 ans",
+        initiales: "AD"
+    },
+    {
+        id: 2,
+        nom: "Lucas Ferreira",
+        role: "Data Scientist & Conseiller ODD",
+        localisation: "Bruxelles, Belgique",
+        disponibilite: "Disponible",
+        langues: ["Français", "Anglais", "Portugais"],
+        bio: "Expert en science des données appliquée aux Objectifs de Développement Durable. A collaboré avec le PNUD et plusieurs gouvernements européens.",
+        domaines: ["Data Science", "ODD", "Impact Social"],
+        missions: ["Ateliers", "Analyse de données", "Conseil stratégique"],
+        experience: "8 ans",
+        initiales: "LF"
+    },
+    {
+        id: 3,
+        nom: "Sophie Marchand",
+        role: "Spécialiste Régulation IA",
+        localisation: "Paris, France",
+        disponibilite: "Disponible sous 2 semaines",
+        langues: ["Français", "Anglais", "Allemand"],
+        bio: "Juriste et policy maker spécialisée dans le droit numérique européen. Auteure de plusieurs rapports sur l'AI Act et la souveraineté numérique.",
+        domaines: ["Régulation", "Droit Numérique", "IA & Gouvernance"],
+        missions: ["Conseil juridique", "Rédaction de rapports", "Conférences"],
+        experience: "10 ans",
+        initiales: "SM"
+    },
+    {
+        id: 4,
+        nom: "Kwame Asante",
+        role: "Expert NLP & Langues Africaines",
+        localisation: "Accra, Ghana",
+        disponibilite: "Disponible",
+        langues: ["Anglais", "Twi", "Français"],
+        bio: "Chercheur en traitement du langage naturel pour les langues sous-représentées. Contributeur actif aux initiatives open-source d'IA africaine.",
+        domaines: ["NLP", "IA Inclusive", "Recherche"],
+        missions: ["Recherche appliquée", "Ateliers", "Conférences"],
+        experience: "6 ans",
+        initiales: "KA"
+    },
+    {
+        id: 5,
+        nom: "Isabelle Chen",
+        role: "Directrice Data & Transformation",
+        localisation: "Genève, Suisse",
+        disponibilite: "Mission longue durée",
+        langues: ["Français", "Anglais", "Mandarin"],
+        bio: "Spécialiste de la transformation data dans les organisations internationales. A dirigé des projets pour l'OMS et plusieurs agences onusiennes.",
+        domaines: ["Data Science", "Transformation Digitale", "Santé"],
+        missions: ["Direction de projet", "Conseil stratégique", "Formation"],
+        experience: "15 ans",
+        initiales: "IC"
+    },
+    {
+        id: 6,
+        nom: "Mehdi Bensalem",
+        role: "Ingénieur ML & Systèmes Embarqués",
+        localisation: "Tunis, Tunisie",
+        disponibilite: "Disponible",
+        langues: ["Français", "Arabe", "Anglais"],
+        bio: "Ingénieur spécialisé en apprentissage automatique pour environnements à faibles ressources. Consultant pour des ONG opérant en zones rurales.",
+        domaines: ["Machine Learning", "IA Embarquée", "ODD"],
+        missions: ["Développement", "Conseil technique", "Formation"],
+        experience: "7 ans",
+        initiales: "MB"
+    }
+];
