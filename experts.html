@@ -32,15 +32,9 @@
         </div>
 
         <!-- FILTERS -->
-        <div class="filters" id="filters">
-            <button class="filter-btn active" data-filter="tous">Tous</button>
-            <button class="filter-btn" data-filter="IA & Gouvernance">IA & Gouvernance</button>
-            <button class="filter-btn" data-filter="Data Science">Data Science</button>
-            <button class="filter-btn" data-filter="Régulation">Régulation</button>
-            <button class="filter-btn" data-filter="NLP">NLP</button>
-            <button class="filter-btn" data-filter="ODD">ODD</button>
-            <button class="filter-btn" data-filter="Machine Learning">Machine Learning</button>
-        </div>
+        <button class="btn-reset-filters" id="reset-filters">Réinitialiser les filtres</button>
+
+        <div id="filter-groups"></div>
 
         <!-- RESULTS COUNT -->
         <p style="color: var(--gray); font-size: 0.85rem; margin-bottom: 1.5rem;" id="results-count"></p>
@@ -55,31 +49,112 @@
 
     <script src="data.js"></script>
     <script>
-        let filtreActif = 'tous';
+        // Extrait le pays d'une chaîne "localisation" (dernier segment après la
+        // dernière virgule ; repli sur la chaîne entière si aucune virgule).
+        function extrairePays(localisation) {
+            const index = localisation.lastIndexOf(',');
+            return index === -1 ? localisation.trim() : localisation.slice(index + 1).trim();
+        }
+
+        // Les 4 catégories de filtre. `valeur` retourne toujours un tableau,
+        // même pour un champ scalaire (ex. disponibilite).
+        const GROUPES_FILTRES = [
+            { id: 'domaine', label: 'Domaine', valeur: e => e.domaines },
+            { id: 'pays', label: 'Pays', valeur: e => [extrairePays(e.localisation)] },
+            { id: 'langue', label: 'Langue', valeur: e => e.langues },
+            { id: 'disponibilite', label: 'Disponibilité', valeur: e => [e.disponibilite] },
+        ];
+
+        // Seul chemin autorisé pour obtenir les valeurs de catégorie d'un expert.
+        function valeursDe(expert, groupe) {
+            return groupe.valeur(expert);
+        }
+
+        const filtresActifs = Object.fromEntries(GROUPES_FILTRES.map(g => [g.id, new Set()]));
         let recherche = '';
+
+        // Un expert correspond-il à l'ensemble des filtres actifs (AND inter-
+        // catégories, OR intra-catégorie) et à la recherche texte courante ?
+        function correspondFiltres(expert) {
+            const matchRecherche = recherche === '' ||
+                expert.nom.toLowerCase().includes(recherche) ||
+                expert.role.toLowerCase().includes(recherche) ||
+                expert.bio.toLowerCase().includes(recherche) ||
+                expert.localisation.toLowerCase().includes(recherche) ||
+                expert.disponibilite.toLowerCase().includes(recherche) ||
+                expert.domaines.some(d => d.toLowerCase().includes(recherche)) ||
+                expert.langues.some(l => l.toLowerCase().includes(recherche));
+            if (!matchRecherche) return false;
+
+            return GROUPES_FILTRES.every(groupe => {
+                const actifs = filtresActifs[groupe.id];
+                if (actifs.size === 0) return true;
+                return valeursDe(expert, groupe).some(v => actifs.has(v));
+            });
+        }
+
+        function valeursUniques(groupe) {
+            const valeurs = new Set();
+            experts.forEach(expert => valeursDe(expert, groupe).forEach(v => valeurs.add(v)));
+            return Array.from(valeurs).sort((a, b) => a.localeCompare(b, 'fr'));
+        }
+
+        // Construit une fois la structure DOM (libellé + conteneur de boutons)
+        // de chaque catégorie, à partir de GROUPES_FILTRES.
+        function initialiserGroupesFiltres() {
+            const parent = document.getElementById('filter-groups');
+            GROUPES_FILTRES.forEach(groupe => {
+                const bloc = document.createElement('div');
+                bloc.className = 'filter-group';
+
+                const libelle = document.createElement('div');
+                libelle.className = 'filter-group-label';
+                libelle.textContent = groupe.label;
+                bloc.appendChild(libelle);
+
+                const container = document.createElement('div');
+                container.className = 'filters';
+                container.id = `filters-${groupe.id}`;
+                container.addEventListener('click', e => {
+                    if (!e.target.classList.contains('filter-btn')) return;
+                    const valeur = e.target.dataset.valeur;
+                    const actifs = filtresActifs[groupe.id];
+                    if (actifs.has(valeur)) actifs.delete(valeur);
+                    else actifs.add(valeur);
+                    afficherExperts();
+                });
+                bloc.appendChild(container);
+
+                parent.appendChild(bloc);
+            });
+        }
+
+        function afficherFiltres() {
+            GROUPES_FILTRES.forEach(groupe => {
+                const container = document.getElementById(`filters-${groupe.id}`);
+                container.innerHTML = '';
+                valeursUniques(groupe).forEach(valeur => {
+                    const bouton = document.createElement('button');
+                    bouton.className = 'filter-btn' + (filtresActifs[groupe.id].has(valeur) ? ' active' : '');
+                    bouton.dataset.valeur = valeur;
+                    bouton.textContent = valeur;
+                    container.appendChild(bouton);
+                });
+            });
+        }
 
         function afficherExperts() {
             const grid = document.getElementById('experts-grid');
             const count = document.getElementById('results-count');
 
-            let resultats = experts.filter(e => {
-                const matchFiltre = filtreActif === 'tous' || e.domaines.includes(filtreActif);
-                const matchRecherche = recherche === '' ||
-                    e.nom.toLowerCase().includes(recherche) ||
-                    e.role.toLowerCase().includes(recherche) ||
-                    e.bio.toLowerCase().includes(recherche) ||
-                    e.domaines.some(d => d.toLowerCase().includes(recherche));
-                return matchFiltre && matchRecherche;
-            });
+            const resultats = experts.filter(correspondFiltres);
 
             count.textContent = `${resultats.length} expert${resultats.length > 1 ? 's' : ''} trouvé${resultats.length > 1 ? 's' : ''}`;
 
             if (resultats.length === 0) {
                 grid.innerHTML = `<p style="color: var(--gray); grid-column: 1/-1;">Aucun expert ne correspond à votre recherche.</p>`;
-                return;
-            }
-
-            grid.innerHTML = resultats.map(e => `
+            } else {
+                grid.innerHTML = resultats.map(e => `
         <a href="expert.html?id=${e.id}" class="expert-card">
           <div class="expert-card-top">
             <div class="expert-avatar">${e.initiales}</div>
@@ -95,14 +170,16 @@
           </div>
         </a>
       `).join('');
+            }
+
+            afficherFiltres();
         }
 
-        // Filtres
-        document.getElementById('filters').addEventListener('click', e => {
-            if (!e.target.classList.contains('filter-btn')) return;
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            e.target.classList.add('active');
-            filtreActif = e.target.dataset.filter;
+        // Réinitialisation
+        document.getElementById('reset-filters').addEventListener('click', () => {
+            GROUPES_FILTRES.forEach(groupe => filtresActifs[groupe.id].clear());
+            recherche = '';
+            document.getElementById('search-input').value = '';
             afficherExperts();
         });
 
@@ -112,6 +189,7 @@
             afficherExperts();
         });
 
+        initialiserGroupesFiltres();
         afficherExperts();
     </script>
 

@@ -456,6 +456,40 @@ section {
 }
 
 /* FILTERS */
+.btn-reset-filters {
+    display: block;
+    margin: 0 auto 1.5rem;
+    padding: 0.4rem 1rem;
+    border-radius: 50px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--gray);
+    font-size: 0.78rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+}
+
+.btn-reset-filters:hover {
+    border-color: var(--purple);
+    color: var(--purple-light);
+}
+
+.filter-group {
+    margin-bottom: 1.2rem;
+}
+
+.filter-group-label {
+    text-align: center;
+    color: var(--gray);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.6rem;
+}
+
 .filters {
     display: flex;
     gap: 0.6rem;
