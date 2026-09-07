@@ -96,16 +96,33 @@
         const filtresActifs = Object.fromEntries(GROUPES_FILTRES.map(g => [g.id, new Set()]));
         let recherche = '';
 
-        // Un expert correspond-il à l'ensemble des filtres actifs (AND inter-
-        // catégories, OR intra-catégorie) et à la recherche texte courante ?
-        function correspondFiltres(expert) {
-            if (!correspondRecherche(expert, recherche)) return false;
-
+        // Cet expert satisfait-il les filtres actifs de toutes les catégories
+        // sauf `categorieExclue` (AND inter-catégories, OR intra-catégorie) ?
+        function correspondAutresCategories(expert, categorieExclue) {
             return GROUPES_FILTRES.every(groupe => {
+                if (groupe.id === categorieExclue) return true;
                 const actifs = filtresActifs[groupe.id];
                 if (actifs.size === 0) return true;
                 return valeursDe(expert, groupe).some(v => actifs.has(v));
             });
+        }
+
+        // Un expert correspond-il à l'ensemble des filtres actifs (AND inter-
+        // catégories, OR intra-catégorie) et à la recherche texte courante ?
+        function correspondFiltres(expert) {
+            if (!correspondRecherche(expert, recherche)) return false;
+            return correspondAutresCategories(expert, null);
+        }
+
+        // Nombre d'experts qu'obtiendrait un bouton s'il était activé : filtres
+        // actifs des *autres* catégories + recherche, en ignorant la propre
+        // catégorie du bouton (cohérent avec le OR intra-catégorie).
+        function calculerCompteur(groupe, valeur) {
+            return experts.filter(expert => {
+                if (!correspondRecherche(expert, recherche)) return false;
+                if (!correspondAutresCategories(expert, groupe.id)) return false;
+                return valeursDe(expert, groupe).includes(valeur);
+            }).length;
         }
 
         function valeursUniques(groupe) {
@@ -152,7 +169,7 @@
                     const bouton = document.createElement('button');
                     bouton.className = 'filter-btn' + (filtresActifs[groupe.id].has(valeur) ? ' active' : '');
                     bouton.dataset.valeur = valeur;
-                    bouton.textContent = valeur;
+                    bouton.textContent = `${valeur} (${calculerCompteur(groupe, valeur)})`;
                     container.appendChild(bouton);
                 });
             });
