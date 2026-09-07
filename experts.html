@@ -70,21 +70,36 @@
             return groupe.valeur(expert);
         }
 
+        // Retire les diacritiques et met en minuscule, pour une comparaison
+        // insensible aux accents et à la casse.
+        function normaliser(texte) {
+            return texte.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+        }
+
+        // Cet expert correspond-il au texte de recherche courant ? Couvre
+        // nom, rôle, bio, localisation complète, disponibilité, domaines, langues.
+        function correspondRecherche(expert, recherche) {
+            if (recherche === '') return true;
+            const terme = normaliser(recherche);
+            const champs = [
+                expert.nom,
+                expert.role,
+                expert.bio,
+                expert.localisation,
+                expert.disponibilite,
+                ...expert.domaines,
+                ...expert.langues,
+            ];
+            return champs.some(champ => normaliser(champ).includes(terme));
+        }
+
         const filtresActifs = Object.fromEntries(GROUPES_FILTRES.map(g => [g.id, new Set()]));
         let recherche = '';
 
         // Un expert correspond-il à l'ensemble des filtres actifs (AND inter-
         // catégories, OR intra-catégorie) et à la recherche texte courante ?
         function correspondFiltres(expert) {
-            const matchRecherche = recherche === '' ||
-                expert.nom.toLowerCase().includes(recherche) ||
-                expert.role.toLowerCase().includes(recherche) ||
-                expert.bio.toLowerCase().includes(recherche) ||
-                expert.localisation.toLowerCase().includes(recherche) ||
-                expert.disponibilite.toLowerCase().includes(recherche) ||
-                expert.domaines.some(d => d.toLowerCase().includes(recherche)) ||
-                expert.langues.some(l => l.toLowerCase().includes(recherche));
-            if (!matchRecherche) return false;
+            if (!correspondRecherche(expert, recherche)) return false;
 
             return GROUPES_FILTRES.every(groupe => {
                 const actifs = filtresActifs[groupe.id];
@@ -185,7 +200,7 @@
 
         // Recherche
         document.getElementById('search-input').addEventListener('input', e => {
-            recherche = e.target.value.toLowerCase().trim();
+            recherche = e.target.value.trim();
             afficherExperts();
         });
 
