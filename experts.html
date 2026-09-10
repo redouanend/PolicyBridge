@@ -32,7 +32,10 @@
         </div>
 
         <!-- FILTERS -->
-        <button class="btn-reset-filters" id="reset-filters">Réinitialiser les filtres</button>
+        <div class="filter-actions">
+            <button class="btn-reset-filters" id="reset-filters">Réinitialiser</button>
+            <button class="btn-reset-filters" id="export-csv">Exporter en CSV</button>
+        </div>
 
         <div id="filter-groups"></div>
 
@@ -206,6 +209,50 @@
 
             afficherFiltres();
         }
+
+        // Échappe une valeur pour une cellule CSV (RFC 4180) : entoure de
+        // guillemets et double les guillemets internes dès qu'un caractère
+        // spécial (virgule, guillemet, retour à la ligne) est présent.
+        function echapperCSV(valeur) {
+            const texte = String(valeur);
+            if (/[",\n]/.test(texte)) {
+                return `"${texte.replace(/"/g, '""')}"`;
+            }
+            return texte;
+        }
+
+        const COLONNES_CSV = [
+            { entete: 'Nom', valeur: e => e.nom },
+            { entete: 'Rôle', valeur: e => e.role },
+            { entete: 'Localisation', valeur: e => e.localisation },
+            { entete: 'Disponibilité', valeur: e => e.disponibilite },
+            { entete: 'Domaines', valeur: e => e.domaines.join('; ') },
+            { entete: 'Langues', valeur: e => e.langues.join('; ') },
+            { entete: 'Expérience', valeur: e => e.experience },
+        ];
+
+        // Génère le CSV des experts actuellement affichés (recherche +
+        // filtres actifs) et déclenche son téléchargement.
+        function exporterCSV() {
+            const resultats = experts.filter(correspondFiltres);
+            const lignes = [
+                COLONNES_CSV.map(c => echapperCSV(c.entete)).join(','),
+                ...resultats.map(e => COLONNES_CSV.map(c => echapperCSV(c.valeur(e))).join(',')),
+            ];
+            const csv = '﻿' + lignes.join('\r\n');
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const lien = document.createElement('a');
+            lien.href = url;
+            lien.download = 'experts.csv';
+            document.body.appendChild(lien);
+            lien.click();
+            document.body.removeChild(lien);
+            URL.revokeObjectURL(url);
+        }
+
+        document.getElementById('export-csv').addEventListener('click', exporterCSV);
 
         // Réinitialisation
         document.getElementById('reset-filters').addEventListener('click', () => {
