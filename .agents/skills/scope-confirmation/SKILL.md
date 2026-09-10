@@ -1,6 +1,6 @@
 ---
 name: scope-confirmation
-description: À consulter avant d'implémenter un ticket, si tu envisages d'inclure du travail relevant d'un autre ticket (même très couplé techniquement), ou d'élargir ce qui a été explicitement demandé.
+description: À consulter avant d'entreprendre plusieurs changements distincts dans la même session (que ce soit un ticket, une revue de code, ou une demande ouverte), si tu envisages d'agir sur plus d'un point sans qu'on te l'ait demandé explicitement pour chacun.
 ---
 
 # Confirmation de scope avant élargissement
